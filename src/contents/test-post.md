@@ -1,17 +1,17 @@
 ---
 author: Abgier Avraha
 datetime: 2022-11-29T3:06:39.348Z
-title: Adding new posts in AstroPaper theme
-slug: adding-new-posts-in-astropaper-theme
+title: Test Post
+slug: test-post
 featured: true
 draft: false
 tags:
   - docs
 ogImage: ""
-description: Test post
+description: A test post
 ---
 
-Test code
+This is a test post
 
 ## Table of contents
 
