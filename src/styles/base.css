@@ -96,7 +96,7 @@
   }
 
   /* iPhone Link Buttons */
-  a[type=button] {
+  a[type="button"] {
     appearance: none;
     border-radius: none;
     -webkit-appearance: none;
