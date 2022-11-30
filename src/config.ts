@@ -4,7 +4,7 @@ export const SITE = {
   website: "https://abgier-avraha.github.io/",
   author: "Abgier Avraha",
   desc: "A blog for React TypeScript and Dotnet developers.",
-  title: "Producing Value",
+  title: "Producing Value Blog",
   // TODO: replace image
   ogImage: "default-og.png",
   lightAndDarkMode: true,

@@ -1,8 +1,8 @@
-import { SITE } from "src/config";
 import rss from "@astrojs/rss";
-import type { Frontmatter } from "src/types";
-import type { MarkdownInstance } from "astro";
 import slugify from "@utils/slugify";
+import type { MarkdownInstance } from "astro";
+import { SITE } from "src/config";
+import type { Frontmatter } from "src/types";
 
 const postImportResult = import.meta.glob<MarkdownInstance<Frontmatter>>(
   "../contents/**/**/*.md",
