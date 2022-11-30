@@ -2,7 +2,7 @@ const primaryColorScheme =
   window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches
     ? "dark"
     : "light";
-console.log(window.matchMedia("(prefers-color-scheme: dark)").matches);
+
 // Get theme data from local storage
 const currentTheme = localStorage.getItem("theme");
 
