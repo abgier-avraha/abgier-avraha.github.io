@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="canonical" href="https://astro-paper.pages.dev/posts/react-testing-with-react-context/">
+    <meta name="generator" content="Astro v1.6.11">
+
+    <!-- General Meta Tags -->
+    <title>React Testing with React Context</title>
+    <meta name="title" content="React Testing with React Context">
+    <meta name="description" content="A guide for utilizing service abstractions through React Context to swap out real services with mock services in tests.">
+    <meta name="author" content="Abgier Avraha">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:title" content="React Testing with React Context">
+    <meta property="og:description" content="A guide for utilizing service abstractions through React Context to swap out real services with mock services in tests.">
+    <meta property="og:url" content="https://astro-paper.pages.dev/posts/react-testing-with-react-context/">
+    <meta property="og:image" content="https://astro-paper.pages.dev/default-og.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://astro-paper.pages.dev/posts/react-testing-with-react-context/">
+    <meta property="twitter:title" content="React Testing with React Context">
+    <meta property="twitter:description" content="A guide for utilizing service abstractions through React Context to swap out real services with mock services in tests.">
+    <meta property="twitter:image" content="https://astro-paper.pages.dev/default-og.png">
+
+    <!-- Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Fira+Code:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+    <script src="/toggle-theme.js"></script>
+
+    <script type="text/partytown" src="https://www.googletagmanager.com/gtag/js?id=G-MCXC4SDEEQ"></script>
+    <script type="text/partytown">
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+      gtag("config", "G-MCXC4SDEEQ");
+    </script>
+  <link rel="stylesheet" href="/assets/about.311c2337.css" />
+<link rel="stylesheet" href="/assets/_slug_.1fb8df1a.css" />
+<link rel="stylesheet" href="/assets/_slug_.7839422e.css" />
+<link rel="stylesheet" href="/assets/about.9516d4f4.css" />
+<link rel="stylesheet" href="/assets/_slug_.1b182ae4.css" />
+<link rel="stylesheet" href="/assets/_slug_.778dab85.css" /><script type="module">const a=document.querySelector(".hamburger-menu"),t=document.querySelector("nav")?.classList,e=document.querySelector(".icon-container")?.classList,o=document.querySelector("#first-line")?.classList,n=document.querySelector("#second-line ")?.classList,s=document.querySelector("#third-line")?.classList;a.addEventListener("click",function(){t?.contains("display-none")?(t?.remove("display-none"),e?.remove("flex"),e?.add("relative"),o?.add("rotate-45","absolute","bottom-1/2"),s?.add("display-none"),n?.add("!w-full","-rotate-45","absolute","bottom-1/2")):(t?.add("display-none"),e?.add("flex"),e?.remove("relative"),o?.remove("rotate-45","absolute","bottom-1/2"),s?.remove("display-none"),n?.remove("!w-full","-rotate-45","absolute","bottom-1/2"))});
+</script>
+<script>!(function(w,p,f,c){c=w[p]=Object.assign(w[p]||{},{"lib":"/~partytown/","debug":false});c[f]=(c[f]||[])})(window,'partytown','forward');/* Partytown 0.7.2 - MIT builder.io */
+!function(t,e,n,i,r,o,a,d,s,c,p,l){function u(){l||(l=1,"/"==(a=(o.lib||"/~partytown/")+(o.debug?"debug/":""))[0]&&(s=e.querySelectorAll('script[type="text/partytown"]'),i!=t?i.dispatchEvent(new CustomEvent("pt1",{detail:t})):(d=setTimeout(w,1e4),e.addEventListener("pt0",f),r?h(1):n.serviceWorker?n.serviceWorker.register(a+(o.swPath||"partytown-sw.js"),{scope:a}).then((function(t){t.active?h():t.installing&&t.installing.addEventListener("statechange",(function(t){"activated"==t.target.state&&h()}))}),console.error):w())))}function h(t){c=e.createElement(t?"script":"iframe"),t||(c.setAttribute("style","display:block;width:0;height:0;border:0;visibility:hidden"),c.setAttribute("aria-hidden",!0)),c.src=a+"partytown-"+(t?"atomics.js?v=0.7.2":"sandbox-sw.html?"+Date.now()),e.body.appendChild(c)}function w(t,n){for(f(),t=0;t<s.length;t++)(n=e.createElement("script")).innerHTML=s[t].innerHTML,e.head.appendChild(n);c&&c.parentNode.removeChild(c)}function f(){clearTimeout(d)}o=t.partytown||{},i==t&&(o.forward||[]).map((function(e){p=t,e.split(".").map((function(e,n,i){p=p[i[n]]=n+1<i.length?"push"==i[n+1]?[]:p[i[n]]||{}:function(){(t._ptf=t._ptf||[]).push(i,arguments)}}))})),"complete"==e.readyState?u():(t.addEventListener("DOMContentLoaded",u),t.addEventListener("load",u))}(window,document,navigator,top,window.crossOriginIsolated);</script></head>
+  <body>
+    <header class="astro-M4D54LDE">
+  <a id="skip-to-content" href="#main-content" class="astro-M4D54LDE">Skip to content</a>
+  <div class="nav-container astro-M4D54LDE">
+    <div class="top-nav-wrap astro-M4D54LDE">
+      <a href="/" class="logo astro-M4D54LDE">
+        Producing Value Blog
+      </a>
+      <button class="hamburger-menu astro-M4D54LDE" aria-label="menu">
+        <div class="icon-container flex astro-M4D54LDE">
+          <div id="first-line" class="astro-M4D54LDE"></div>
+          <div id="second-line" class="astro-M4D54LDE"></div>
+          <div id="third-line" class="astro-M4D54LDE"></div>
+        </div>
+      </button>
+    </div>
+    <nav class="display-none sm:flex astro-M4D54LDE">
+      <ul class="astro-M4D54LDE">
+        <li class="astro-M4D54LDE">
+          <a href="/posts" class=" astro-M4D54LDE">Posts</a>
+        </li>
+        <li class="astro-M4D54LDE">
+          <a href="/tags" class=" astro-M4D54LDE">Tags</a>
+        </li>
+        <li class="astro-M4D54LDE">
+          <a href="/about" class=" astro-M4D54LDE">About</a>
+        </li>
+      </ul>
+      <div class="button-wrapper astro-M4D54LDE">
+        <a type="button" href="/search" tabindex="0" class="group focus-outline p-3 sm:p-1  astro-M4D54LDE astro-AENLN72D" aria-label="search" title="Search">
+  <svg xmlns="http://www.w3.org/2000/svg" class="scale-125 sm:scale-100 astro-M4D54LDE"><path d="M19.023 16.977a35.13 35.13 0 0 1-1.367-1.384c-.372-.378-.596-.653-.596-.653l-2.8-1.337A6.962 6.962 0 0 0 16 9c0-3.859-3.14-7-7-7S2 5.141 2 9s3.14 7 7 7c1.763 0 3.37-.66 4.603-1.739l1.337 2.8s.275.224.653.596c.387.363.896.854 1.384 1.367l1.358 1.392.604.646 2.121-2.121-.646-.604c-.379-.372-.885-.866-1.391-1.36zM9 14c-2.757 0-5-2.243-5-5s2.243-5 5-5 5 2.243 5 5-2.243 5-5 5z" class="astro-M4D54LDE"></path>
+          </svg>
+</a>
+
+
+
+        <button id="theme-btn" class="focus-outline astro-M4D54LDE" title="Toggles light & dark" aria-label="auto" aria-live="polite">
+              <svg xmlns="http://www.w3.org/2000/svg" id="moon-svg" class="astro-M4D54LDE">
+                <path d="M20.742 13.045a8.088 8.088 0 0 1-2.077.271c-2.135 0-4.14-.83-5.646-2.336a8.025 8.025 0 0 1-2.064-7.723A1 1 0 0 0 9.73 2.034a10.014 10.014 0 0 0-4.489 2.582c-3.898 3.898-3.898 10.243 0 14.143a9.937 9.937 0 0 0 7.072 2.93 9.93 9.93 0 0 0 7.07-2.929 10.007 10.007 0 0 0 2.583-4.491 1.001 1.001 0 0 0-1.224-1.224zm-2.772 4.301a7.947 7.947 0 0 1-5.656 2.343 7.953 7.953 0 0 1-5.658-2.344c-3.118-3.119-3.118-8.195 0-11.314a7.923 7.923 0 0 1 2.06-1.483 10.027 10.027 0 0 0 2.89 7.848 9.972 9.972 0 0 0 7.848 2.891 8.036 8.036 0 0 1-1.484 2.059z" class="astro-M4D54LDE"></path>
+              </svg>
+              <svg xmlns="http://www.w3.org/2000/svg" id="sun-svg" class="astro-M4D54LDE">
+                <path d="M6.993 12c0 2.761 2.246 5.007 5.007 5.007s5.007-2.246 5.007-5.007S14.761 6.993 12 6.993 6.993 9.239 6.993 12zM12 8.993c1.658 0 3.007 1.349 3.007 3.007S13.658 15.007 12 15.007 8.993 13.658 8.993 12 10.342 8.993 12 8.993zM10.998 19h2v3h-2zm0-17h2v3h-2zm-9 9h3v2h-3zm17 0h3v2h-3zM4.219 18.363l2.12-2.122 1.415 1.414-2.12 2.122zM16.24 6.344l2.122-2.122 1.414 1.414-2.122 2.122zM6.342 7.759 4.22 5.637l1.415-1.414 2.12 2.122zm13.434 10.605-1.414 1.414-2.122-2.122 1.414-1.414z" class="astro-M4D54LDE"></path>
+              </svg>
+            </button>
+      </div>
+    </nav>
+  </div>
+  <div class="max-w-3xl mx-auto px-4">
+  <hr class="border-skin-line" aria-hidden="true">
+</div>
+</header>
+
+
+
+<div class="max-w-3xl mx-auto w-full px-2 flex justify-start astro-TUOHNYCG">
+    <button class="mt-8 mb-2 hover:opacity-75 flex focus-outline astro-TUOHNYCG" onclick="history.back()">
+      <svg xmlns="http://www.w3.org/2000/svg" class="astro-TUOHNYCG"><path d="M13.293 6.293 7.586 12l5.707 5.707 1.414-1.414L10.414 12l4.293-4.293z" class="astro-TUOHNYCG"></path>
+      </svg><span class="astro-TUOHNYCG">Go back</span>
+    </button>
+  </div><main id="main-content" class="astro-TUOHNYCG">
+    <h1 class="post-title astro-TUOHNYCG">React Testing with React Context</h1>
+    <div class="opacity-80 flex items-center space-x-2 my-2 astro-TUOHNYCG"><svg xmlns="http://www.w3.org/2000/svg" class="scale-100 w-6 h-6 inline-block fill-skin-base" aria-hidden="true"><path d="M7 11h2v2H7zm0 4h2v2H7zm4-4h2v2h-2zm0 4h2v2h-2zm4-4h2v2h-2zm0 4h2v2h-2z"></path><path d="M5 22h14c1.103 0 2-.897 2-2V6c0-1.103-.897-2-2-2h-2V2h-2v2H9V2H7v2H5c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2zM19 8l.001 12H5V8h14z"></path></svg><span class="sr-only">Posted on:</span><span class="italic text-base">December 1, 2022<span aria-hidden="true"> | </span><span class="sr-only"> at </span>11:00 AM</span></div>
+    <article id="article" role="article" class="mx-auto max-w-3xl mt-8 prose astro-TUOHNYCG">
+      <p>The following article is a guide for using abstractions with the React Context API to write automated tests for React. I’ve found that using interface abstractions over services such as HTTP API’s and browser specific API’s not only improves testability but also the ability to quickly refactor code as well. Using Dotnet’s impressive set of interfaces to power everything on the backend drove me to see what benefits more abstraction could bring to the frontend.</p>
+<h2 id="table-of-contents">Table of contents</h2>
+<p></p><details><summary>Open Table of contents</summary><p></p>
+<ul>
+<li>
+<p><a href="#js-module-mocking-vs-react-context">JS Module Mocking vs React Context</a></p>
+<ul>
+<li><a href="#js-module-mocking">JS Module Mocking</a></li>
+<li><a href="#react-context">React Context</a></li>
+</ul>
+</li>
+<li>
+<p><a href="#using-react-context-with-service-interfaces">Using React Context with Service Interfaces</a></p>
+<ul>
+<li><a href="#creating-an-api-interface">Creating an API Interface</a></li>
+<li><a href="#implementing-our-api-interface">Implementing Our API Interface</a></li>
+<li><a href="#providing-our-api-implementation-through-react-context">Providing Our API Implementation Through React Context</a></li>
+<li><a href="#accessing-our-implementation-with-a-hook">Accessing Our Implementation with a Hook</a></li>
+</ul>
+</li>
+<li>
+<p><a href="#writing-tests">Writing Tests</a></p>
+<ul>
+<li><a href="#creating-a-fake-api-implementation">Creating a Fake API Implementation</a></li>
+<li><a href="#providing-the-fake-api-in-tests">Providing the Fake API in Tests</a></li>
+<li><a href="#writing-our-test">Writing Our Test</a></li>
+</ul>
+</li>
+<li>
+<p><a href="#github-example-repo">Github Example Repo</a></p>
+</li>
+</ul>
+<p></p></details><p></p>
+<h2 id="js-module-mocking-vs-react-context">JS Module Mocking vs React Context</h2>
+<h3 id="js-module-mocking">JS Module Mocking</h3>
+<p>Most React devs may have come across module mocking at some point. We won’t be using Jest in this guide in favor of Vitest but you may be familiar with this documentation on mocking modules manually/automatically <a href="https://jestjs.io/docs/manual-mocks#mocking-user-modules">https://jestjs.io/docs/manual-mocks#mocking-user-modules</a>. Module mocking achieves a similar goal of replacing the implementation of a file with one that is more appropriate for tests. The main downsides of module mocking is that</p>
+<ul>
+<li>It depends on having a mock file in a Jest specified folder <code>module_dir/__mocks__/module_file_name.js</code></li>
+<li>Or manually replacing a module at a given path via <code>jest.mock("./module_path", () => mockModule )</code>.</li>
+</ul>
+<p>This can be immensely useful when working on brownfield projects with many existing modules but for other projects we can declare and hook into abstractions to avoid module mocking all together. We can also statically verify that our test will actually work by just making sure our test files compile in TypeScript.</p>
+<h3 id="react-context">React Context</h3>
+<p>React Context allows us to access any value in any component nested within a provider component. So imagine the value we have is an instance of a class which is preventing us from writing our tests because it is dependent on external services on the internet or browser specific API’s which are unavailable in the test suite. We can swap out the instance of that class with a fake one in our tests and bypass module mocking all together.</p>
+<p>Imagine replacing this:</p>
+<pre is:raw="" class="astro-code" style="background-color: #282c34; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code><span class="line"><span style="color: #ABB2BF">&#x3C;</span><span style="color: #E5C07B">ApiProvider</span><span style="color: #ABB2BF"> </span><span style="color: #D19A66">implementation</span><span style="color: #56B6C2">=</span><span style="color: #C678DD">{</span><span style="color: #E06C75">api</span><span style="color: #C678DD">}</span><span style="color: #ABB2BF">></span></span>
+<span class="line"><span style="color: #ABB2BF">  &#x3C;</span><span style="color: #E5C07B">App</span><span style="color: #ABB2BF"> /></span></span>
+<span class="line"><span style="color: #ABB2BF">&#x3C;/</span><span style="color: #E5C07B">ApiProvider</span><span style="color: #ABB2BF">></span></span></code></pre>
+<p>With this to be able to run your test:</p>
+<pre is:raw="" class="astro-code" style="background-color: #282c34; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code><span class="line"><span style="color: #ABB2BF">&#x3C;</span><span style="color: #E5C07B">ApiProvider</span><span style="color: #ABB2BF"> </span><span style="color: #D19A66">implementation</span><span style="color: #56B6C2">=</span><span style="color: #C678DD">{</span><span style="color: #E06C75">fakeApi</span><span style="color: #C678DD">}</span><span style="color: #ABB2BF">></span></span>
+<span class="line"><span style="color: #ABB2BF">  &#x3C;</span><span style="color: #E5C07B">App</span><span style="color: #ABB2BF"> /></span></span>
+<span class="line"><span style="color: #ABB2BF">&#x3C;/</span><span style="color: #E5C07B">ApiProvider</span><span style="color: #ABB2BF">></span></span></code></pre>
+<p>In the code below we will create an API service interface. We will then select the appropriate API service implementation depending on whether the code is running in our web browser or within automated tests. We can then pass it into our API context provider component. The API service will be accessible through a React hook called <code>useApi()</code>.</p>
+<h2 id="using-react-context-with-service-interfaces">Using React Context with Service Interfaces</h2>
+<h3 id="creating-an-api-interface">Creating an API Interface</h3>
+<p>So this will be the interface that we need to implement before passing our API service to the API service context provider.</p>
+<pre is:raw="" class="astro-code" style="background-color: #282c34; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code><span class="line"><span style="color: #7F848E">// src/services/api-service/IApiService.ts</span></span>
+<span class="line"><span style="color: #C678DD">export</span><span style="color: #ABB2BF"> </span><span style="color: #C678DD">interface</span><span style="color: #ABB2BF"> </span><span style="color: #E5C07B">PostDTO</span><span style="color: #ABB2BF"> {</span></span>
+<span class="line"><span style="color: #ABB2BF">  </span><span style="color: #E06C75">userId</span><span style="color: #ABB2BF">: </span><span style="color: #E5C07B">number</span><span style="color: #ABB2BF">;</span></span>
+<span class="line"><span style="color: #ABB2BF">  </span><span style="color: #E06C75">id</span><span style="color: #ABB2BF">: </span><span style="color: #E5C07B">number</span><span style="color: #ABB2BF">;</span></span>
+<span class="line"><span style="color: #ABB2BF">  </span><span style="color: #E06C75">title</span><span style="color: #ABB2BF">: </span><span style="color: #E5C07B">string</span><span style="color: #ABB2BF">;</span></span>
+<span class="line"><span style="color: #ABB2BF">  </span><span style="color: #E06C75">body</span><span style="color: #ABB2BF">: </span><span style="color: #E5C07B">string</span><span style="color: #ABB2BF">;</span></span>
+<span class="line"><span style="color: #ABB2BF">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #C678DD">export</span><span style="color: #ABB2BF"> </span><span style="color: #C678DD">interface</span><span style="color: #ABB2BF"> </span><span style="color: #E5C07B">IApiService</span><span style="color: #ABB2BF"> {</span></span>
+<span class="line"><span style="color: #ABB2BF">  </span><span style="color: #61AFEF">getPosts</span><span style="color: #ABB2BF">(): </span><span style="color: #E5C07B">Promise</span><span style="color: #ABB2BF">&#x3C;</span><span style="color: #E5C07B">PostDTO</span><span style="color: #ABB2BF">[]>;</span></span>
+<span class="line"><span style="color: #ABB2BF">}</span></span></code></pre>
+<h3 id="implementing-our-api-interface">Implementing Our API Interface</h3>
+<p>Our real implementation of the API service for production and development.</p>
+<pre is:raw="" class="astro-code" style="background-color: #282c34; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code><span class="line"><span style="color: #7F848E">// src/services/api-service/implementations/ApiService.ts</span></span>
+<span class="line"><span style="color: #C678DD">import</span><span style="color: #ABB2BF"> { </span><span style="color: #E06C75">IApiService</span><span style="color: #ABB2BF">, </span><span style="color: #E06C75">PostDTO</span><span style="color: #ABB2BF"> } </span><span style="color: #C678DD">from</span><span style="color: #ABB2BF"> </span><span style="color: #98C379">"../IApiService"</span><span style="color: #ABB2BF">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #C678DD">export</span><span style="color: #ABB2BF"> </span><span style="color: #C678DD">class</span><span style="color: #ABB2BF"> </span><span style="color: #E5C07B">ApiService</span><span style="color: #ABB2BF"> </span><span style="color: #C678DD">implements</span><span style="color: #ABB2BF"> </span><span style="color: #E5C07B">IApiService</span><span style="color: #ABB2BF"> {</span></span>
+<span class="line"><span style="color: #ABB2BF">  </span><span style="color: #C678DD">async</span><span style="color: #ABB2BF"> </span><span style="color: #61AFEF">getPosts</span><span style="color: #ABB2BF">(): </span><span style="color: #E5C07B">Promise</span><span style="color: #ABB2BF">&#x3C;</span><span style="color: #E5C07B">PostDTO</span><span style="color: #ABB2BF">[]> {</span></span>
+<span class="line"><span style="color: #ABB2BF">    </span><span style="color: #C678DD">const</span><span style="color: #ABB2BF"> </span><span style="color: #E5C07B">res</span><span style="color: #ABB2BF"> </span><span style="color: #56B6C2">=</span><span style="color: #ABB2BF"> </span><span style="color: #C678DD">await</span><span style="color: #ABB2BF"> </span><span style="color: #61AFEF">fetch</span><span style="color: #ABB2BF">(</span></span>
+<span class="line"><span style="color: #ABB2BF">      </span><span style="color: #98C379">"https://jsonplaceholder.typicode.com/posts?userId=1"</span></span>
+<span class="line"><span style="color: #ABB2BF">    );</span></span>
+<span class="line"><span style="color: #ABB2BF">    </span><span style="color: #C678DD">return</span><span style="color: #ABB2BF"> </span><span style="color: #C678DD">await</span><span style="color: #ABB2BF"> </span><span style="color: #E5C07B">res</span><span style="color: #ABB2BF">.</span><span style="color: #61AFEF">json</span><span style="color: #ABB2BF">();</span></span>
+<span class="line"><span style="color: #ABB2BF">  }</span></span>
+<span class="line"><span style="color: #ABB2BF">}</span></span></code></pre>
+<h3 id="providing-our-api-implementation-through-react-context">Providing Our API Implementation Through React Context</h3>
+<p>Instead of the <code>&#x3C;ApiProvider /></code> deciding what API service implementation we have to use, we can provide our own implementation of the API service through the <code>implementation</code> prop. The <code>useApi()</code> hook which fetches the implementation from our provider will be the gateway for whenever we want to make API calls.</p>
+<pre is:raw="" class="astro-code" style="background-color: #282c34; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code><span class="line"><span style="color: #7F848E">// src/hooks/ApiProvider.tsx</span></span>
+<span class="line"><span style="color: #C678DD">import</span><span style="color: #ABB2BF"> </span><span style="color: #E06C75">React</span><span style="color: #ABB2BF">, { </span><span style="color: #E06C75">useContext</span><span style="color: #ABB2BF"> } </span><span style="color: #C678DD">from</span><span style="color: #ABB2BF"> </span><span style="color: #98C379">"react"</span><span style="color: #ABB2BF">;</span></span>
+<span class="line"><span style="color: #C678DD">import</span><span style="color: #ABB2BF"> { </span><span style="color: #E06C75">IApiService</span><span style="color: #ABB2BF"> } </span><span style="color: #C678DD">from</span><span style="color: #ABB2BF"> </span><span style="color: #98C379">"../services/api-service/IApiService"</span><span style="color: #ABB2BF">;</span></span>
+<span class="line"><span style="color: #C678DD">import</span><span style="color: #ABB2BF"> { </span><span style="color: #E06C75">ApiService</span><span style="color: #ABB2BF"> } </span><span style="color: #C678DD">from</span><span style="color: #ABB2BF"> </span><span style="color: #98C379">"../services/api-service/providers/ApiService"</span><span style="color: #ABB2BF">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #C678DD">interface</span><span style="color: #ABB2BF"> </span><span style="color: #E5C07B">IProps</span><span style="color: #ABB2BF"> {</span></span>
+<span class="line"><span style="color: #ABB2BF">  </span><span style="color: #E06C75">implementation</span><span style="color: #ABB2BF">: </span><span style="color: #E5C07B">IApiService</span><span style="color: #ABB2BF">;</span></span>
+<span class="line"><span style="color: #ABB2BF">  </span><span style="color: #E06C75">children</span><span style="color: #ABB2BF">: </span><span style="color: #E5C07B">React</span><span style="color: #ABB2BF">.</span><span style="color: #E5C07B">ReactNode</span><span style="color: #ABB2BF">;</span></span>
+<span class="line"><span style="color: #ABB2BF">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #7F848E">// Initialize the context with a default value</span></span>
+<span class="line"><span style="color: #C678DD">const</span><span style="color: #ABB2BF"> </span><span style="color: #E5C07B">ApiContext</span><span style="color: #ABB2BF"> </span><span style="color: #56B6C2">=</span><span style="color: #ABB2BF"> </span><span style="color: #E5C07B">React</span><span style="color: #ABB2BF">.</span><span style="color: #61AFEF">createContext</span><span style="color: #ABB2BF">&#x3C;</span><span style="color: #E5C07B">IApiService</span><span style="color: #ABB2BF">>(</span><span style="color: #C678DD">new</span><span style="color: #ABB2BF"> </span><span style="color: #61AFEF">ApiService</span><span style="color: #ABB2BF">());</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #C678DD">export</span><span style="color: #ABB2BF"> </span><span style="color: #C678DD">function</span><span style="color: #ABB2BF"> </span><span style="color: #61AFEF">ApiProvider</span><span style="color: #ABB2BF">(</span><span style="color: #E06C75">props</span><span style="color: #ABB2BF">: </span><span style="color: #E5C07B">IProps</span><span style="color: #ABB2BF">) {</span></span>
+<span class="line"><span style="color: #ABB2BF">  </span><span style="color: #C678DD">return</span><span style="color: #ABB2BF"> (</span></span>
+<span class="line"><span style="color: #ABB2BF">    &#x3C;</span><span style="color: #E5C07B">ApiContext.Provider</span><span style="color: #ABB2BF"> </span><span style="color: #D19A66">value</span><span style="color: #56B6C2">=</span><span style="color: #C678DD">{</span><span style="color: #E5C07B">props</span><span style="color: #ABB2BF">.</span><span style="color: #E06C75">implementation</span><span style="color: #C678DD">}</span><span style="color: #ABB2BF">></span></span>
+<span class="line"><span style="color: #ABB2BF">      </span><span style="color: #C678DD">{</span><span style="color: #E5C07B">props</span><span style="color: #ABB2BF">.</span><span style="color: #E06C75">children</span><span style="color: #C678DD">}</span></span>
+<span class="line"><span style="color: #ABB2BF">    &#x3C;/</span><span style="color: #E5C07B">ApiContext.Provider</span><span style="color: #ABB2BF">></span></span>
+<span class="line"><span style="color: #ABB2BF">  );</span></span>
+<span class="line"><span style="color: #ABB2BF">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #C678DD">export</span><span style="color: #ABB2BF"> </span><span style="color: #C678DD">function</span><span style="color: #ABB2BF"> </span><span style="color: #61AFEF">useApi</span><span style="color: #ABB2BF">() {</span></span>
+<span class="line"><span style="color: #ABB2BF">  </span><span style="color: #C678DD">return</span><span style="color: #ABB2BF"> </span><span style="color: #61AFEF">useContext</span><span style="color: #ABB2BF">(</span><span style="color: #E06C75">ApiContext</span><span style="color: #ABB2BF">);</span></span>
+<span class="line"><span style="color: #ABB2BF">}</span></span></code></pre>
+<h3 id="accessing-our-implementation-with-a-hook">Accessing Our Implementation with a Hook</h3>
+<p><code>index.tsx</code> will be the root of our application and provide our app with any context it requires.</p>
+<pre is:raw="" class="astro-code" style="background-color: #282c34; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code><span class="line"><span style="color: #7F848E">// src/index.tsx</span></span>
+<span class="line"><span style="color: #C678DD">import</span><span style="color: #ABB2BF"> </span><span style="color: #E06C75">React</span><span style="color: #ABB2BF"> </span><span style="color: #C678DD">from</span><span style="color: #ABB2BF"> </span><span style="color: #98C379">"react"</span><span style="color: #ABB2BF">;</span></span>
+<span class="line"><span style="color: #C678DD">import</span><span style="color: #ABB2BF"> </span><span style="color: #E06C75">ReactDOM</span><span style="color: #ABB2BF"> </span><span style="color: #C678DD">from</span><span style="color: #ABB2BF"> </span><span style="color: #98C379">"react-dom/client"</span><span style="color: #ABB2BF">;</span></span>
+<span class="line"><span style="color: #C678DD">import</span><span style="color: #ABB2BF"> </span><span style="color: #E06C75">App</span><span style="color: #ABB2BF"> </span><span style="color: #C678DD">from</span><span style="color: #ABB2BF"> </span><span style="color: #98C379">"./App"</span><span style="color: #ABB2BF">;</span></span>
+<span class="line"><span style="color: #C678DD">import</span><span style="color: #ABB2BF"> { </span><span style="color: #E06C75">ApiProvider</span><span style="color: #ABB2BF"> } </span><span style="color: #C678DD">from</span><span style="color: #ABB2BF"> </span><span style="color: #98C379">"./hooks/ApiProvider"</span><span style="color: #ABB2BF">;</span></span>
+<span class="line"><span style="color: #C678DD">import</span><span style="color: #ABB2BF"> { </span><span style="color: #E06C75">ApiService</span><span style="color: #ABB2BF"> } </span><span style="color: #C678DD">from</span><span style="color: #ABB2BF"> </span><span style="color: #98C379">"./services/api-service/implementations/ApiService"</span><span style="color: #ABB2BF">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #C678DD">const</span><span style="color: #ABB2BF"> </span><span style="color: #E5C07B">api</span><span style="color: #ABB2BF"> </span><span style="color: #56B6C2">=</span><span style="color: #ABB2BF"> </span><span style="color: #C678DD">new</span><span style="color: #ABB2BF"> </span><span style="color: #61AFEF">ApiService</span><span style="color: #ABB2BF">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #E5C07B">ReactDOM</span><span style="color: #ABB2BF">.</span><span style="color: #61AFEF">createRoot</span><span style="color: #ABB2BF">(</span><span style="color: #E5C07B">document</span><span style="color: #ABB2BF">.</span><span style="color: #61AFEF">getElementById</span><span style="color: #ABB2BF">(</span><span style="color: #98C379">"root"</span><span style="color: #ABB2BF">)</span><span style="color: #56B6C2">!</span><span style="color: #ABB2BF">).</span><span style="color: #61AFEF">render</span><span style="color: #ABB2BF">(</span></span>
+<span class="line"><span style="color: #ABB2BF">  &#x3C;</span><span style="color: #E5C07B">React.StrictMode</span><span style="color: #ABB2BF">></span></span>
+<span class="line"><span style="color: #ABB2BF">    &#x3C;</span><span style="color: #E5C07B">ApiProvider</span><span style="color: #ABB2BF"> </span><span style="color: #D19A66">implementation</span><span style="color: #56B6C2">=</span><span style="color: #C678DD">{</span><span style="color: #E06C75">api</span><span style="color: #C678DD">}</span><span style="color: #ABB2BF">></span></span>
+<span class="line"><span style="color: #ABB2BF">      &#x3C;</span><span style="color: #E5C07B">App</span><span style="color: #ABB2BF"> /></span></span>
+<span class="line"><span style="color: #ABB2BF">    &#x3C;/</span><span style="color: #E5C07B">ApiProvider</span><span style="color: #ABB2BF">></span></span>
+<span class="line"><span style="color: #ABB2BF">  &#x3C;/</span><span style="color: #E5C07B">React.StrictMode</span><span style="color: #ABB2BF">></span></span>
+<span class="line"><span style="color: #ABB2BF">);</span></span></code></pre>
+<p><code>&#x3C;App /></code> will be our the entrypoint closest to our root. It is currently wrapped by <code>index.tsx</code> which includes a provider for the real API service. We will wrap <code>&#x3C;App /></code> with a different provider in our tests so that we can work with a fake implementation of our API service.</p>
+<pre is:raw="" class="astro-code" style="background-color: #282c34; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code><span class="line"><span style="color: #7F848E">// src/App.tsx</span></span>
+<span class="line"><span style="color: #C678DD">import</span><span style="color: #ABB2BF"> { </span><span style="color: #E06C75">Posts</span><span style="color: #ABB2BF"> } </span><span style="color: #C678DD">from</span><span style="color: #ABB2BF"> </span><span style="color: #98C379">"./components/Posts"</span><span style="color: #ABB2BF">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #C678DD">function</span><span style="color: #ABB2BF"> </span><span style="color: #61AFEF">App</span><span style="color: #ABB2BF">() {</span></span>
+<span class="line"><span style="color: #ABB2BF">  </span><span style="color: #C678DD">return</span><span style="color: #ABB2BF"> &#x3C;</span><span style="color: #E5C07B">Posts</span><span style="color: #ABB2BF"> />;</span></span>
+<span class="line"><span style="color: #ABB2BF">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #C678DD">export</span><span style="color: #ABB2BF"> </span><span style="color: #C678DD">default</span><span style="color: #ABB2BF"> </span><span style="color: #E06C75">App</span><span style="color: #ABB2BF">;</span></span></code></pre>
+<p><code>&#x3C;Posts /></code> is the component that will actually consume data from the API service and display it.</p>
+<pre is:raw="" class="astro-code" style="background-color: #282c34; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code><span class="line"><span style="color: #7F848E">// src/components/Posts.tsx</span></span>
+<span class="line"><span style="color: #C678DD">import</span><span style="color: #ABB2BF"> { </span><span style="color: #E06C75">useAsync</span><span style="color: #ABB2BF"> } </span><span style="color: #C678DD">from</span><span style="color: #ABB2BF"> </span><span style="color: #98C379">"react-async-hook"</span><span style="color: #ABB2BF">;</span></span>
+<span class="line"><span style="color: #C678DD">import</span><span style="color: #ABB2BF"> { </span><span style="color: #E06C75">useApi</span><span style="color: #ABB2BF"> } </span><span style="color: #C678DD">from</span><span style="color: #ABB2BF"> </span><span style="color: #98C379">"../hooks/ApiProvider"</span><span style="color: #ABB2BF">;</span></span>
+<span class="line"><span style="color: #C678DD">import</span><span style="color: #ABB2BF"> </span><span style="color: #98C379">"./Posts.css"</span><span style="color: #ABB2BF">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #C678DD">export</span><span style="color: #ABB2BF"> </span><span style="color: #C678DD">function</span><span style="color: #ABB2BF"> </span><span style="color: #61AFEF">Posts</span><span style="color: #ABB2BF">() {</span></span>
+<span class="line"><span style="color: #ABB2BF">  </span><span style="color: #C678DD">const</span><span style="color: #ABB2BF"> </span><span style="color: #E5C07B">api</span><span style="color: #ABB2BF"> </span><span style="color: #56B6C2">=</span><span style="color: #ABB2BF"> </span><span style="color: #61AFEF">useApi</span><span style="color: #ABB2BF">();</span></span>
+<span class="line"><span style="color: #ABB2BF">  </span><span style="color: #C678DD">const</span><span style="color: #ABB2BF"> </span><span style="color: #E5C07B">fetcher</span><span style="color: #ABB2BF"> </span><span style="color: #56B6C2">=</span><span style="color: #ABB2BF"> </span><span style="color: #61AFEF">useAsync</span><span style="color: #ABB2BF">(</span><span style="color: #E5C07B">api</span><span style="color: #ABB2BF">.</span><span style="color: #E06C75">getPosts</span><span style="color: #ABB2BF">, []);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #ABB2BF">  </span><span style="color: #C678DD">if</span><span style="color: #ABB2BF"> (</span><span style="color: #E5C07B">fetcher</span><span style="color: #ABB2BF">.</span><span style="color: #E06C75">result</span><span style="color: #ABB2BF"> </span><span style="color: #56B6C2">===</span><span style="color: #ABB2BF"> </span><span style="color: #D19A66">undefined</span><span style="color: #ABB2BF">) {</span></span>
+<span class="line"><span style="color: #ABB2BF">    </span><span style="color: #C678DD">return</span><span style="color: #ABB2BF"> </span><span style="color: #D19A66">null</span><span style="color: #ABB2BF">;</span></span>
+<span class="line"><span style="color: #ABB2BF">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #ABB2BF">  </span><span style="color: #C678DD">return</span><span style="color: #ABB2BF"> (</span></span>
+<span class="line"><span style="color: #ABB2BF">    &#x3C;</span><span style="color: #E06C75">div</span><span style="color: #ABB2BF"> </span><span style="color: #D19A66">className</span><span style="color: #56B6C2">=</span><span style="color: #98C379">"container"</span><span style="color: #ABB2BF">></span></span>
+<span class="line"><span style="color: #ABB2BF">      </span><span style="color: #C678DD">{</span><span style="color: #E5C07B">fetcher</span><span style="color: #ABB2BF">.</span><span style="color: #E5C07B">result</span><span style="color: #ABB2BF">.</span><span style="color: #61AFEF">map</span><span style="color: #ABB2BF">(</span><span style="color: #E06C75">post</span><span style="color: #ABB2BF"> </span><span style="color: #C678DD">=></span><span style="color: #ABB2BF"> (</span></span>
+<span class="line"><span style="color: #ABB2BF">        &#x3C;</span><span style="color: #E06C75">div</span><span style="color: #ABB2BF"> </span><span style="color: #D19A66">key</span><span style="color: #56B6C2">=</span><span style="color: #C678DD">{</span><span style="color: #E5C07B">post</span><span style="color: #ABB2BF">.</span><span style="color: #E06C75">id</span><span style="color: #C678DD">}</span><span style="color: #ABB2BF"> </span><span style="color: #D19A66">className</span><span style="color: #56B6C2">=</span><span style="color: #98C379">"basic-card basic-card-aqua"</span><span style="color: #ABB2BF">></span></span>
+<span class="line"><span style="color: #ABB2BF">          &#x3C;</span><span style="color: #E06C75">div</span><span style="color: #ABB2BF"> </span><span style="color: #D19A66">className</span><span style="color: #56B6C2">=</span><span style="color: #98C379">"card-content"</span><span style="color: #ABB2BF">></span></span>
+<span class="line"><span style="color: #ABB2BF">            &#x3C;</span><span style="color: #E06C75">span</span><span style="color: #ABB2BF"> </span><span style="color: #D19A66">className</span><span style="color: #56B6C2">=</span><span style="color: #98C379">"card-title"</span><span style="color: #ABB2BF">></span><span style="color: #C678DD">{</span><span style="color: #E5C07B">post</span><span style="color: #ABB2BF">.</span><span style="color: #E06C75">title</span><span style="color: #C678DD">}</span><span style="color: #ABB2BF">&#x3C;/</span><span style="color: #E06C75">span</span><span style="color: #ABB2BF">></span></span>
+<span class="line"><span style="color: #ABB2BF">            &#x3C;</span><span style="color: #E06C75">p</span><span style="color: #ABB2BF"> </span><span style="color: #D19A66">className</span><span style="color: #56B6C2">=</span><span style="color: #98C379">"card-text"</span><span style="color: #ABB2BF">></span><span style="color: #C678DD">{</span><span style="color: #E5C07B">post</span><span style="color: #ABB2BF">.</span><span style="color: #E06C75">body</span><span style="color: #C678DD">}</span><span style="color: #ABB2BF">&#x3C;/</span><span style="color: #E06C75">p</span><span style="color: #ABB2BF">></span></span>
+<span class="line"><span style="color: #ABB2BF">          &#x3C;/</span><span style="color: #E06C75">div</span><span style="color: #ABB2BF">></span></span>
+<span class="line"><span style="color: #ABB2BF">        &#x3C;/</span><span style="color: #E06C75">div</span><span style="color: #ABB2BF">></span></span>
+<span class="line"><span style="color: #ABB2BF">      ))</span><span style="color: #C678DD">}</span></span>
+<span class="line"><span style="color: #ABB2BF">    &#x3C;/</span><span style="color: #E06C75">div</span><span style="color: #ABB2BF">></span></span>
+<span class="line"><span style="color: #ABB2BF">  );</span></span>
+<span class="line"><span style="color: #ABB2BF">}</span></span></code></pre>
+<p>Go ahead and run <code>npm start</code> to see that our <code>&#x3C;Posts /></code> component is fetching real data via an XHR request.</p>
+<h2 id="writing-tests">Writing Tests</h2>
+<h3 id="creating-a-fake-api-implementation">Creating a Fake API Implementation</h3>
+<p>Our fake implementation of the API service for general automated testing.</p>
+<pre is:raw="" class="astro-code" style="background-color: #282c34; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code><span class="line"><span style="color: #7F848E">// src/services/api-service/implementations/FakeApiService.ts</span></span>
+<span class="line"><span style="color: #C678DD">import</span><span style="color: #ABB2BF"> { </span><span style="color: #E06C75">IApiService</span><span style="color: #ABB2BF">, </span><span style="color: #E06C75">PostDTO</span><span style="color: #ABB2BF"> } </span><span style="color: #C678DD">from</span><span style="color: #ABB2BF"> </span><span style="color: #98C379">"../IApiService"</span><span style="color: #ABB2BF">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #C678DD">export</span><span style="color: #ABB2BF"> </span><span style="color: #C678DD">class</span><span style="color: #ABB2BF"> </span><span style="color: #E5C07B">FakeApiService</span><span style="color: #ABB2BF"> </span><span style="color: #C678DD">implements</span><span style="color: #ABB2BF"> </span><span style="color: #E5C07B">IApiService</span><span style="color: #ABB2BF"> {</span></span>
+<span class="line"><span style="color: #ABB2BF">  </span><span style="color: #C678DD">async</span><span style="color: #ABB2BF"> </span><span style="color: #61AFEF">getPosts</span><span style="color: #ABB2BF">(): </span><span style="color: #E5C07B">Promise</span><span style="color: #ABB2BF">&#x3C;</span><span style="color: #E5C07B">PostDTO</span><span style="color: #ABB2BF">[]> {</span></span>
+<span class="line"><span style="color: #ABB2BF">    </span><span style="color: #C678DD">return</span><span style="color: #ABB2BF"> </span><span style="color: #E06C75">FakePostsRes</span><span style="color: #ABB2BF">;</span></span>
+<span class="line"><span style="color: #ABB2BF">  }</span></span>
+<span class="line"><span style="color: #ABB2BF">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #C678DD">const</span><span style="color: #ABB2BF"> </span><span style="color: #E5C07B">FakePostsRes</span><span style="color: #ABB2BF">: </span><span style="color: #E5C07B">PostDTO</span><span style="color: #ABB2BF">[] </span><span style="color: #56B6C2">=</span><span style="color: #ABB2BF"> [</span></span>
+<span class="line"><span style="color: #ABB2BF">  {</span></span>
+<span class="line"><span style="color: #ABB2BF">    </span><span style="color: #E06C75">userId</span><span style="color: #ABB2BF">: </span><span style="color: #D19A66">1</span><span style="color: #ABB2BF">,</span></span>
+<span class="line"><span style="color: #ABB2BF">    </span><span style="color: #E06C75">id</span><span style="color: #ABB2BF">: </span><span style="color: #D19A66">1</span><span style="color: #ABB2BF">,</span></span>
+<span class="line"><span style="color: #ABB2BF">    </span><span style="color: #E06C75">title</span><span style="color: #ABB2BF">: </span><span style="color: #98C379">"Mock post 1"</span><span style="color: #ABB2BF">,</span></span>
+<span class="line"><span style="color: #ABB2BF">    </span><span style="color: #E06C75">body</span><span style="color: #ABB2BF">: </span><span style="color: #98C379">"Mock body for post 1."</span><span style="color: #ABB2BF">,</span></span>
+<span class="line"><span style="color: #ABB2BF">  },</span></span>
+<span class="line"><span style="color: #ABB2BF">  {</span></span>
+<span class="line"><span style="color: #ABB2BF">    </span><span style="color: #E06C75">userId</span><span style="color: #ABB2BF">: </span><span style="color: #D19A66">1</span><span style="color: #ABB2BF">,</span></span>
+<span class="line"><span style="color: #ABB2BF">    </span><span style="color: #E06C75">id</span><span style="color: #ABB2BF">: </span><span style="color: #D19A66">2</span><span style="color: #ABB2BF">,</span></span>
+<span class="line"><span style="color: #ABB2BF">    </span><span style="color: #E06C75">title</span><span style="color: #ABB2BF">: </span><span style="color: #98C379">"Mock post 2"</span><span style="color: #ABB2BF">,</span></span>
+<span class="line"><span style="color: #ABB2BF">    </span><span style="color: #E06C75">body</span><span style="color: #ABB2BF">: </span><span style="color: #98C379">"Mock body for post 2."</span><span style="color: #ABB2BF">,</span></span>
+<span class="line"><span style="color: #ABB2BF">  },</span></span>
+<span class="line"><span style="color: #ABB2BF">  {</span></span>
+<span class="line"><span style="color: #ABB2BF">    </span><span style="color: #E06C75">userId</span><span style="color: #ABB2BF">: </span><span style="color: #D19A66">1</span><span style="color: #ABB2BF">,</span></span>
+<span class="line"><span style="color: #ABB2BF">    </span><span style="color: #E06C75">id</span><span style="color: #ABB2BF">: </span><span style="color: #D19A66">3</span><span style="color: #ABB2BF">,</span></span>
+<span class="line"><span style="color: #ABB2BF">    </span><span style="color: #E06C75">title</span><span style="color: #ABB2BF">: </span><span style="color: #98C379">"Mock post 3"</span><span style="color: #ABB2BF">,</span></span>
+<span class="line"><span style="color: #ABB2BF">    </span><span style="color: #E06C75">body</span><span style="color: #ABB2BF">: </span><span style="color: #98C379">"Mock body for post 3."</span><span style="color: #ABB2BF">,</span></span>
+<span class="line"><span style="color: #ABB2BF">  },</span></span>
+<span class="line"><span style="color: #ABB2BF">];</span></span></code></pre>
+<h3 id="providing-the-fake-api-in-tests">Providing the Fake API in Tests</h3>
+<p><code>&#x3C;TestProvider /></code> will wrap our tests and will allow us to seamlessly and safely swap out the implementation passed into our context provider. It will use the fake implementation of our API by default but the implementation can be swapped out per test, allowing us to test an endless number of scenarios.</p>
+<pre is:raw="" class="astro-code" style="background-color: #282c34; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code><span class="line"><span style="color: #7F848E">// src/test-utils/TestProvider.tsx</span></span>
+<span class="line"><span style="color: #C678DD">import</span><span style="color: #ABB2BF"> { </span><span style="color: #E06C75">ApiProvider</span><span style="color: #ABB2BF"> } </span><span style="color: #C678DD">from</span><span style="color: #ABB2BF"> </span><span style="color: #98C379">"../hooks/ApiProvider"</span><span style="color: #ABB2BF">;</span></span>
+<span class="line"><span style="color: #C678DD">import</span><span style="color: #ABB2BF"> { </span><span style="color: #E06C75">IApiService</span><span style="color: #ABB2BF"> } </span><span style="color: #C678DD">from</span><span style="color: #ABB2BF"> </span><span style="color: #98C379">"../services/api-service/IApiService"</span><span style="color: #ABB2BF">;</span></span>
+<span class="line"><span style="color: #C678DD">import</span><span style="color: #ABB2BF"> { </span><span style="color: #E06C75">FakeApiService</span><span style="color: #ABB2BF"> } </span><span style="color: #C678DD">from</span><span style="color: #ABB2BF"> </span><span style="color: #98C379">"../services/api-service/implementations/FakeApiService"</span><span style="color: #ABB2BF">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #7F848E">// A safe default for tests</span></span>
+<span class="line"><span style="color: #C678DD">const</span><span style="color: #ABB2BF"> </span><span style="color: #E5C07B">api</span><span style="color: #ABB2BF"> </span><span style="color: #56B6C2">=</span><span style="color: #ABB2BF"> </span><span style="color: #C678DD">new</span><span style="color: #ABB2BF"> </span><span style="color: #61AFEF">FakeApiService</span><span style="color: #ABB2BF">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #C678DD">interface</span><span style="color: #ABB2BF"> </span><span style="color: #E5C07B">IProps</span><span style="color: #ABB2BF"> {</span></span>
+<span class="line"><span style="color: #ABB2BF">  </span><span style="color: #E06C75">children</span><span style="color: #ABB2BF">: </span><span style="color: #E5C07B">React</span><span style="color: #ABB2BF">.</span><span style="color: #E5C07B">ReactNode</span><span style="color: #ABB2BF">;</span></span>
+<span class="line"><span style="color: #ABB2BF">  </span><span style="color: #E06C75">apiService</span><span style="color: #C678DD">?</span><span style="color: #ABB2BF">: </span><span style="color: #E5C07B">IApiService</span><span style="color: #ABB2BF">;</span></span>
+<span class="line"><span style="color: #ABB2BF">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #7F848E">/*</span></span>
+<span class="line"><span style="color: #7F848E">  You can use this component to add multiple other service providers</span></span>
+<span class="line"><span style="color: #7F848E">  that are generally required for your test cases.</span></span>
+<span class="line"><span style="color: #7F848E">*/</span></span>
+<span class="line"><span style="color: #C678DD">export</span><span style="color: #ABB2BF"> </span><span style="color: #C678DD">function</span><span style="color: #ABB2BF"> </span><span style="color: #61AFEF">TestProvider</span><span style="color: #ABB2BF">(</span><span style="color: #E06C75">props</span><span style="color: #ABB2BF">: </span><span style="color: #E5C07B">IProps</span><span style="color: #ABB2BF">) {</span></span>
+<span class="line"><span style="color: #ABB2BF">  </span><span style="color: #C678DD">return</span><span style="color: #ABB2BF"> (</span></span>
+<span class="line"><span style="color: #ABB2BF">    &#x3C;</span><span style="color: #E5C07B">ApiProvider</span><span style="color: #ABB2BF"> </span><span style="color: #D19A66">implementation</span><span style="color: #56B6C2">=</span><span style="color: #C678DD">{</span><span style="color: #E5C07B">props</span><span style="color: #ABB2BF">.</span><span style="color: #E06C75">apiService</span><span style="color: #ABB2BF"> </span><span style="color: #56B6C2">??</span><span style="color: #ABB2BF"> </span><span style="color: #E06C75">api</span><span style="color: #C678DD">}</span><span style="color: #ABB2BF">></span></span>
+<span class="line"><span style="color: #ABB2BF">      </span><span style="color: #C678DD">{</span><span style="color: #E5C07B">props</span><span style="color: #ABB2BF">.</span><span style="color: #E06C75">children</span><span style="color: #C678DD">}</span></span>
+<span class="line"><span style="color: #ABB2BF">    &#x3C;/</span><span style="color: #E5C07B">ApiProvider</span><span style="color: #ABB2BF">></span></span>
+<span class="line"><span style="color: #ABB2BF">  );</span></span>
+<span class="line"><span style="color: #ABB2BF">}</span></span></code></pre>
+<h3 id="writing-our-test">Writing Our Test</h3>
+<p>In this test we create a mock implementation of the <code>getPosts()</code> method in our API so that we can monitor how how often it is called and make assertions on what will show up on the screen.</p>
+<pre is:raw="" class="astro-code" style="background-color: #282c34; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code><span class="line"><span style="color: #7F848E">// src/App.test.tsx</span></span>
+<span class="line"><span style="color: #C678DD">import</span><span style="color: #ABB2BF"> { </span><span style="color: #E06C75">render</span><span style="color: #ABB2BF">, </span><span style="color: #E06C75">screen</span><span style="color: #ABB2BF">, </span><span style="color: #E06C75">waitFor</span><span style="color: #ABB2BF"> } </span><span style="color: #C678DD">from</span><span style="color: #ABB2BF"> </span><span style="color: #98C379">"@testing-library/react"</span><span style="color: #ABB2BF">;</span></span>
+<span class="line"><span style="color: #C678DD">import</span><span style="color: #ABB2BF"> { </span><span style="color: #E06C75">expect</span><span style="color: #ABB2BF">, </span><span style="color: #E06C75">it</span><span style="color: #ABB2BF">, </span><span style="color: #E06C75">vi</span><span style="color: #ABB2BF"> } </span><span style="color: #C678DD">from</span><span style="color: #ABB2BF"> </span><span style="color: #98C379">"vitest"</span><span style="color: #ABB2BF">;</span></span>
+<span class="line"><span style="color: #C678DD">import</span><span style="color: #ABB2BF"> </span><span style="color: #E06C75">App</span><span style="color: #ABB2BF"> </span><span style="color: #C678DD">from</span><span style="color: #ABB2BF"> </span><span style="color: #98C379">"./App"</span><span style="color: #ABB2BF">;</span></span>
+<span class="line"><span style="color: #C678DD">import</span><span style="color: #ABB2BF"> { </span><span style="color: #E06C75">TestProvider</span><span style="color: #ABB2BF"> } </span><span style="color: #C678DD">from</span><span style="color: #ABB2BF"> </span><span style="color: #98C379">"./test-utils/TestProvider"</span><span style="color: #ABB2BF">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #61AFEF">it</span><span style="color: #ABB2BF">(</span><span style="color: #98C379">"Renders posts from the API service"</span><span style="color: #ABB2BF">, </span><span style="color: #C678DD">async</span><span style="color: #ABB2BF"> () </span><span style="color: #C678DD">=></span><span style="color: #ABB2BF"> {</span></span>
+<span class="line"><span style="color: #ABB2BF">  </span><span style="color: #7F848E">// Arrange</span></span>
+<span class="line"><span style="color: #ABB2BF">  </span><span style="color: #C678DD">const</span><span style="color: #ABB2BF"> </span><span style="color: #61AFEF">getPosts</span><span style="color: #ABB2BF"> </span><span style="color: #56B6C2">=</span><span style="color: #ABB2BF"> </span><span style="color: #C678DD">async</span><span style="color: #ABB2BF"> () </span><span style="color: #C678DD">=></span><span style="color: #ABB2BF"> [</span></span>
+<span class="line"><span style="color: #ABB2BF">    {</span></span>
+<span class="line"><span style="color: #ABB2BF">      </span><span style="color: #E06C75">userId</span><span style="color: #ABB2BF">: </span><span style="color: #D19A66">1</span><span style="color: #ABB2BF">,</span></span>
+<span class="line"><span style="color: #ABB2BF">      </span><span style="color: #E06C75">id</span><span style="color: #ABB2BF">: </span><span style="color: #D19A66">1</span><span style="color: #ABB2BF">,</span></span>
+<span class="line"><span style="color: #ABB2BF">      </span><span style="color: #E06C75">title</span><span style="color: #ABB2BF">: </span><span style="color: #98C379">"Mock post 1"</span><span style="color: #ABB2BF">,</span></span>
+<span class="line"><span style="color: #ABB2BF">      </span><span style="color: #E06C75">body</span><span style="color: #ABB2BF">: </span><span style="color: #98C379">"Mock body for post 1."</span><span style="color: #ABB2BF">,</span></span>
+<span class="line"><span style="color: #ABB2BF">    },</span></span>
+<span class="line"><span style="color: #ABB2BF">  ];</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #ABB2BF">  </span><span style="color: #C678DD">const</span><span style="color: #ABB2BF"> </span><span style="color: #E5C07B">getPostsMock</span><span style="color: #ABB2BF">: </span><span style="color: #C678DD">typeof</span><span style="color: #ABB2BF"> </span><span style="color: #E06C75">getPosts</span><span style="color: #ABB2BF"> </span><span style="color: #56B6C2">=</span><span style="color: #ABB2BF"> </span><span style="color: #E5C07B">vi</span><span style="color: #ABB2BF">.</span><span style="color: #61AFEF">fn</span><span style="color: #ABB2BF">().</span><span style="color: #61AFEF">mockImplementation</span><span style="color: #ABB2BF">(</span><span style="color: #E06C75">getPosts</span><span style="color: #ABB2BF">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #ABB2BF">  </span><span style="color: #7F848E">// Act</span></span>
+<span class="line"><span style="color: #ABB2BF">  </span><span style="color: #61AFEF">render</span><span style="color: #ABB2BF">(</span></span>
+<span class="line"><span style="color: #ABB2BF">    &#x3C;</span><span style="color: #E5C07B">TestProvider</span></span>
+<span class="line"><span style="color: #ABB2BF">      </span><span style="color: #D19A66">apiService</span><span style="color: #56B6C2">=</span><span style="color: #C678DD">{</span><span style="color: #ABB2BF">{</span></span>
+<span class="line"><span style="color: #ABB2BF">        </span><span style="color: #E06C75">getPosts</span><span style="color: #ABB2BF">: </span><span style="color: #E06C75">getPostsMock</span><span style="color: #ABB2BF">,</span></span>
+<span class="line"><span style="color: #ABB2BF">      }</span><span style="color: #C678DD">}</span></span>
+<span class="line"><span style="color: #ABB2BF">    ></span></span>
+<span class="line"><span style="color: #ABB2BF">      &#x3C;</span><span style="color: #E5C07B">App</span><span style="color: #ABB2BF"> /></span></span>
+<span class="line"><span style="color: #ABB2BF">    &#x3C;/</span><span style="color: #E5C07B">TestProvider</span><span style="color: #ABB2BF">></span></span>
+<span class="line"><span style="color: #ABB2BF">  );</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #ABB2BF">  </span><span style="color: #7F848E">// Assert</span></span>
+<span class="line"><span style="color: #ABB2BF">  </span><span style="color: #C678DD">await</span><span style="color: #ABB2BF"> </span><span style="color: #61AFEF">waitFor</span><span style="color: #ABB2BF">(() </span><span style="color: #C678DD">=></span><span style="color: #ABB2BF"> {</span></span>
+<span class="line"><span style="color: #ABB2BF">    </span><span style="color: #61AFEF">expect</span><span style="color: #ABB2BF">(</span><span style="color: #E06C75">getPostsMock</span><span style="color: #ABB2BF">).</span><span style="color: #61AFEF">toHaveBeenCalledOnce</span><span style="color: #ABB2BF">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #ABB2BF">    </span><span style="color: #61AFEF">expect</span><span style="color: #ABB2BF">(</span><span style="color: #E5C07B">screen</span><span style="color: #ABB2BF">.</span><span style="color: #61AFEF">getByText</span><span style="color: #ABB2BF">(</span><span style="color: #98C379">"Mock post 1"</span><span style="color: #ABB2BF">)).</span><span style="color: #61AFEF">toBeInTheDocument</span><span style="color: #ABB2BF">();</span></span>
+<span class="line"><span style="color: #ABB2BF">    </span><span style="color: #61AFEF">expect</span><span style="color: #ABB2BF">(</span><span style="color: #E5C07B">screen</span><span style="color: #ABB2BF">.</span><span style="color: #61AFEF">getByText</span><span style="color: #ABB2BF">(</span><span style="color: #98C379">"Mock body for post 1."</span><span style="color: #ABB2BF">)).</span><span style="color: #61AFEF">toBeInTheDocument</span><span style="color: #ABB2BF">();</span></span>
+<span class="line"><span style="color: #ABB2BF">  });</span></span>
+<span class="line"><span style="color: #ABB2BF">});</span></span></code></pre>
+<p>Go ahead and run <code>npm test</code> to see that our <code>&#x3C;Posts /></code> component is rendering mock data in our tests.</p>
+<h2 id="github-example-repo">Github Example Repo</h2>
+<p>All of the code snippets above originate from this repo. <a href="https://github.com/abgier-avraha/React-Testing-with-React-Context-Example">https://github.com/abgier-avraha/React-Testing-with-React-Context-Example</a></p>
+    </article>
+
+    <ul class="tags-container astro-TUOHNYCG">
+      <li class="inline-block my-1 underline-offset-4 astro-M5B7HHFI">
+  <a href="/tags/guide" class="pr-1 text-sm group astro-M5B7HHFI">
+    <svg xmlns="http://www.w3.org/2000/svg" class=" scale-75 astro-M5B7HHFI"><path d="M16.018 3.815 15.232 8h-4.966l.716-3.815-1.964-.37L8.232 8H4v2h3.857l-.751 4H3v2h3.731l-.714 3.805 1.965.369L8.766 16h4.966l-.714 3.805 1.965.369.783-4.174H20v-2h-3.859l.751-4H21V8h-3.733l.716-3.815-1.965-.37zM14.106 14H9.141l.751-4h4.966l-.752 4z" class="astro-M5B7HHFI"></path>
+    </svg>
+    &nbsp;<span class="astro-M5B7HHFI">guide</span>
+  </a>
+</li>
+
+<li class="inline-block my-1 underline-offset-4 astro-M5B7HHFI">
+  <a href="/tags/typescript" class="pr-1 text-sm group astro-M5B7HHFI">
+    <svg xmlns="http://www.w3.org/2000/svg" class=" scale-75 astro-M5B7HHFI"><path d="M16.018 3.815 15.232 8h-4.966l.716-3.815-1.964-.37L8.232 8H4v2h3.857l-.751 4H3v2h3.731l-.714 3.805 1.965.369L8.766 16h4.966l-.714 3.805 1.965.369.783-4.174H20v-2h-3.859l.751-4H21V8h-3.733l.716-3.815-1.965-.37zM14.106 14H9.141l.751-4h4.966l-.752 4z" class="astro-M5B7HHFI"></path>
+    </svg>
+    &nbsp;<span class="astro-M5B7HHFI">typescript</span>
+  </a>
+</li>
+
+<li class="inline-block my-1 underline-offset-4 astro-M5B7HHFI">
+  <a href="/tags/react" class="pr-1 text-sm group astro-M5B7HHFI">
+    <svg xmlns="http://www.w3.org/2000/svg" class=" scale-75 astro-M5B7HHFI"><path d="M16.018 3.815 15.232 8h-4.966l.716-3.815-1.964-.37L8.232 8H4v2h3.857l-.751 4H3v2h3.731l-.714 3.805 1.965.369L8.766 16h4.966l-.714 3.805 1.965.369.783-4.174H20v-2h-3.859l.751-4H21V8h-3.733l.716-3.815-1.965-.37zM14.106 14H9.141l.751-4h4.966l-.752 4z" class="astro-M5B7HHFI"></path>
+    </svg>
+    &nbsp;<span class="astro-M5B7HHFI">react</span>
+  </a>
+</li>
+
+<li class="inline-block my-1 underline-offset-4 astro-M5B7HHFI">
+  <a href="/tags/github" class="pr-1 text-sm group astro-M5B7HHFI">
+    <svg xmlns="http://www.w3.org/2000/svg" class=" scale-75 astro-M5B7HHFI"><path d="M16.018 3.815 15.232 8h-4.966l.716-3.815-1.964-.37L8.232 8H4v2h3.857l-.751 4H3v2h3.731l-.714 3.805 1.965.369L8.766 16h4.966l-.714 3.805 1.965.369.783-4.174H20v-2h-3.859l.751-4H21V8h-3.733l.716-3.815-1.965-.37zM14.106 14H9.141l.751-4h4.966l-.752 4z" class="astro-M5B7HHFI"></path>
+    </svg>
+    &nbsp;<span class="astro-M5B7HHFI">github</span>
+  </a>
+</li>
+
+<li class="inline-block my-1 underline-offset-4 astro-M5B7HHFI">
+  <a href="/tags/hooks" class="pr-1 text-sm group astro-M5B7HHFI">
+    <svg xmlns="http://www.w3.org/2000/svg" class=" scale-75 astro-M5B7HHFI"><path d="M16.018 3.815 15.232 8h-4.966l.716-3.815-1.964-.37L8.232 8H4v2h3.857l-.751 4H3v2h3.731l-.714 3.805 1.965.369L8.766 16h4.966l-.714 3.805 1.965.369.783-4.174H20v-2h-3.859l.751-4H21V8h-3.733l.716-3.815-1.965-.37zM14.106 14H9.141l.751-4h4.966l-.752 4z" class="astro-M5B7HHFI"></path>
+    </svg>
+    &nbsp;<span class="astro-M5B7HHFI">hooks</span>
+  </a>
+</li>
+
+<li class="inline-block my-1 underline-offset-4 astro-M5B7HHFI">
+  <a href="/tags/context" class="pr-1 text-sm group astro-M5B7HHFI">
+    <svg xmlns="http://www.w3.org/2000/svg" class=" scale-75 astro-M5B7HHFI"><path d="M16.018 3.815 15.232 8h-4.966l.716-3.815-1.964-.37L8.232 8H4v2h3.857l-.751 4H3v2h3.731l-.714 3.805 1.965.369L8.766 16h4.966l-.714 3.805 1.965.369.783-4.174H20v-2h-3.859l.751-4H21V8h-3.733l.716-3.815-1.965-.37zM14.106 14H9.141l.751-4h4.966l-.752 4z" class="astro-M5B7HHFI"></path>
+    </svg>
+    &nbsp;<span class="astro-M5B7HHFI">context</span>
+  </a>
+</li>
+
+<li class="inline-block my-1 underline-offset-4 astro-M5B7HHFI">
+  <a href="/tags/provider" class="pr-1 text-sm group astro-M5B7HHFI">
+    <svg xmlns="http://www.w3.org/2000/svg" class=" scale-75 astro-M5B7HHFI"><path d="M16.018 3.815 15.232 8h-4.966l.716-3.815-1.964-.37L8.232 8H4v2h3.857l-.751 4H3v2h3.731l-.714 3.805 1.965.369L8.766 16h4.966l-.714 3.805 1.965.369.783-4.174H20v-2h-3.859l.751-4H21V8h-3.733l.716-3.815-1.965-.37zM14.106 14H9.141l.751-4h4.966l-.752 4z" class="astro-M5B7HHFI"></path>
+    </svg>
+    &nbsp;<span class="astro-M5B7HHFI">provider</span>
+  </a>
+</li>
+
+<li class="inline-block my-1 underline-offset-4 astro-M5B7HHFI">
+  <a href="/tags/vite" class="pr-1 text-sm group astro-M5B7HHFI">
+    <svg xmlns="http://www.w3.org/2000/svg" class=" scale-75 astro-M5B7HHFI"><path d="M16.018 3.815 15.232 8h-4.966l.716-3.815-1.964-.37L8.232 8H4v2h3.857l-.751 4H3v2h3.731l-.714 3.805 1.965.369L8.766 16h4.966l-.714 3.805 1.965.369.783-4.174H20v-2h-3.859l.751-4H21V8h-3.733l.716-3.815-1.965-.37zM14.106 14H9.141l.751-4h4.966l-.752 4z" class="astro-M5B7HHFI"></path>
+    </svg>
+    &nbsp;<span class="astro-M5B7HHFI">vite</span>
+  </a>
+</li>
+
+<li class="inline-block my-1 underline-offset-4 astro-M5B7HHFI">
+  <a href="/tags/vitest" class="pr-1 text-sm group astro-M5B7HHFI">
+    <svg xmlns="http://www.w3.org/2000/svg" class=" scale-75 astro-M5B7HHFI"><path d="M16.018 3.815 15.232 8h-4.966l.716-3.815-1.964-.37L8.232 8H4v2h3.857l-.751 4H3v2h3.731l-.714 3.805 1.965.369L8.766 16h4.966l-.714 3.805 1.965.369.783-4.174H20v-2h-3.859l.751-4H21V8h-3.733l.716-3.815-1.965-.37zM14.106 14H9.141l.751-4h4.966l-.752 4z" class="astro-M5B7HHFI"></path>
+    </svg>
+    &nbsp;<span class="astro-M5B7HHFI">vitest</span>
+  </a>
+</li>
+
+
+    </ul>
+  </main><footer class="mt-auto astro-FAGJKM3J">
+  <div class="max-w-3xl mx-auto px-0">
+  <hr class="border-skin-line" aria-hidden="true">
+</div>
+  <div class="footer-wrapper astro-FAGJKM3J">
+    <div class="social-icons flex astro-DCFUEFV5">
+  <a type="button" href="https://github.com/abgier-avraha" tabindex="0" class="group link-button astro-DCFUEFV5 astro-AENLN72D" title=" Producing Value Blog on Github">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    class="icon-tabler"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+    <path
+      d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5"
+    ></path>
+  </svg>
+</a>
+
+<a type="button" href="https://au.linkedin.com/in/abgier-avraha-240510126" tabindex="0" class="group link-button astro-DCFUEFV5 astro-AENLN72D" title="Producing Value Blog on LinkedIn">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    class="icon-tabler"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+    <rect x="4" y="4" width="16" height="16" rx="2"></rect>
+    <line x1="8" y1="11" x2="8" y2="16"></line>
+    <line x1="8" y1="8" x2="8" y2="8.01"></line>
+    <line x1="12" y1="16" x2="12" y2="11"></line>
+    <path d="M16 16v-3a2 2 0 0 0 -4 0"></path>
+  </svg>
+</a>
+
+<a type="button" href="mailto:abgier.avraha@gmail.com" tabindex="0" class="group link-button astro-DCFUEFV5 astro-AENLN72D" title="Send an email to Producing Value Blog">
+  <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="icon-tabler"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+      <rect x="3" y="5" width="18" height="14" rx="2"></rect>
+      <polyline points="3 7 12 13 21 7"></polyline>
+    </svg>
+</a>
+
+
+</div>
+
+
+    <div class="copyright-wrapper astro-FAGJKM3J">
+      <span class="astro-FAGJKM3J">Copyright &#169; 2022</span>
+      <span class="separator astro-FAGJKM3J">&nbsp;|&nbsp;</span>
+      <span class="astro-FAGJKM3J">All rights reserved.</span>
+    </div>
+  </div>
+</footer>
+
+
+  </body></html>
+
