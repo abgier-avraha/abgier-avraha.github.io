@@ -2,7 +2,6 @@
   "name": "astro-paper",
   "version": "1.2.0",
   "private": false,
-  "homepage": "https://abgier-avraha.github.io",
   "scripts": {
     "start": "astro dev",
     "build": "astro build",

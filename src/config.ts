@@ -3,8 +3,8 @@ import type { SocialObjects } from "./types";
 export const SITE = {
   website: "https://abgier-avraha.github.io/",
   author: "Abgier Avraha",
-  desc: "A minimal, responsive and SEO-friendly Astro blog theme.",
-  title: "Producing Value Blog",
+  desc: "A blog for React TypeScript and Dotnet developers.",
+  title: "Producing Value",
   // TODO: replace image
   ogImage: "default-og.png",
   lightAndDarkMode: true,

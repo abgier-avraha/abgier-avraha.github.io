@@ -1,16 +1,22 @@
-name: GitHub Pages
+name: Lint
 
 on:
+  # Trigger the workflow on push or pull request,
+  # but only for the main branch
   push:
     branches:
-      - main # Set a branch name to trigger deployment
+      - "*"
+  # Replace pull_request with pull_request_target if you
+  # plan to use this action with forks, see the Limitations section
   pull_request:
+    branches:
+      - "*"
 
 jobs:
-  deploy:
+  lint:
     runs-on: ubuntu-22.04
     permissions:
-      contents: write
+      contents: read
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}
     steps:
@@ -29,9 +35,3 @@ jobs:
 
       - name: Build
         run: npm run build
-
-      - name: Deploy
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
