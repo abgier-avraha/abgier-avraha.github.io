@@ -95,6 +95,14 @@
     overflow-y: scroll;
   }
 
+  /* iPhone Link Buttons */
+  a[type=button] {
+    appearance: none;
+    border-radius: none;
+    -webkit-appearance: none;
+    -webkit-border-radius: none;
+  }
+
   /* width */
   ::-webkit-scrollbar {
     @apply w-3;
