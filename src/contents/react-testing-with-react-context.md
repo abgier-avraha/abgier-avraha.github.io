@@ -19,7 +19,7 @@ ogImage: ""
 description: A guide for utilizing service abstractions through React Context to swap out real services with mock services in tests.
 ---
 
-The following article is a guide for using abstractions with the React Context API to write automated tests for React. I've found that using interface abstractions over services such as HTTP API's and browser specific API's not only improves testability but also the ability to quickly refactor code as well. Using Dotnet's impressive set of interfaces to power everything on the backend drove me to see what benefits more abstraction could bring to the frontend.
+The following article is a guide for using abstractions with the React Context API to write cleaner automated tests for React. Using abstractions for services, such as HTTP API's and browser specific API's, allows you to easily reimplement those services with mock data for your testing environment. Using Dotnet's impressive set of interfaces to power everything on the backend drove me to see what benefits more abstraction could bring to the frontend.
 
 ## Table of contents
 
