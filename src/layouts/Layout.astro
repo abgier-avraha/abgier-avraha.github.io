@@ -61,6 +61,19 @@ const socialImageURL = new URL(
       onload="this.onload=null;this.rel='stylesheet'"
     />
 
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-MCXC4SDEEQ"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+
+      gtag("config", "G-MCXC4SDEEQ");
+    </script>
+
     <script is:inline src="/toggle-theme.js"></script>
 
     <script
